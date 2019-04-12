@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+
+    <title>lottery</title>
+
+    <style>
+      body {
+        background-color: black;
+        font-family: 微軟正黑體;
+      }
+      #box {
+        height: 300px;
+        width: 300px;
+        margin: 0 auto;
+        position: relative;
+        background-color: rgb(255, 187, 0);
+      }
+      .boxNum {
+        display: block;
+        height: 300px;
+        width: 300px;
+        position: absolute;
+        left: 300px;
+        line-height: 300px;
+        text-align: center;
+        font-size: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-12 text-center">
+          <h1 class="text-light">抽獎機</h1>
+        </div>
+        <div class="col-6 input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text ">最小值</span>
+          </div>
+          <input
+            id="min"
+            class="form-control text-right text-white"
+            aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-default"
+            style="background-color: dimgray;"
+          />
+        </div>
+        <div class="col-6 input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">最大值</span>
+          </div>
+          <input
+            id="max"
+            class="form-control text-right text-white"
+            aria-label="Sizing example input"
+            aria-describedby="inputGroup-sizing-default "
+            style="background-color: dimgray;"
+          />
+        </div>
+        <div id="box" class="mb-3">
+          <h1 class="boxNum">123</h1>
+          <h1 class="boxNum"></h1>
+          <h1 class="boxNum"></h1>
+        </div>
+      </div>
+      <div class="col-12 text-center mb-5 text-white">
+        <h1 >中獎號碼</h1>
+      </div>
+      <div class="col-12 text-center">
+        <button
+          id="start"
+          type="button"
+          class="btn btn-outline-light rounded"
+          style=" height:50px; width: 500px;"
+          align="center"
+          value="start"
+        >
+          Start
+        </button>
+      </div>
+      <div class="col-12 text-center">
+        <button
+          id="do"
+          type="button"
+          class="btn btn-outline-light rounded mt-2"
+          style=" height:50px; width: 500px;"
+          align="center"
+          value="do"
+        >
+          Do
+        </button>
+      </div>
+    </div>
+
+    <script>
+      var min;
+      var max;
+      var arr = [];
+      var array = [];
+      var x = 0;
+
+      document.getElementById("start").onclick = function() {
+        min = parseFloat(document.getElementById("min").value);
+        max = parseFloat(document.getElementById("max").value);
+        //取得抽獎的範圍
+        for (var i = min; i <= max; i++) {
+          array[x] = i;
+          x++;
+        }
+        // console.warn(array);
+        //arr = [1, 2, 3, 4, 5];
+        arr = array.sort(randomsort);
+        // console.log(arr);
+      };
+      document.getElementById("do").onclick = function() {
+        //獲取中獎號碼
+
+        roll();
+        var getNum = arr.shift();
+        arr = array.sort(randomsort);
+
+        console.log(getNum);
+        console.log(arr);
+      };
+
+      // 打亂陣列;
+      function randomsort(a, b) {
+        return Math.random() > 0.5 ? -1 : 1;
+        //用Math.random()函式生成0~1之間的隨機數與0.5比較，返回-1或1 ?:如果 不是 則是
+      }
+
+      //抽獎動畫
+      var n = 0;
+      function roll() {
+        setInterval(function() {
+          $($(".boxNum")[n % 3]).text(arr[n]);
+          //$($('.boxNum')[n % 3]).finish();
+          $($(".boxNum")[n % 3]).css("left", "300px");
+
+          $($(".boxNum")[n % 3]).animate({ left: "-300px" }, 700, "linear");
+          //animate的基本用法為.animate( properties [, duration ] [, easing ] [, complete ] )
+          //properties為目的效果、duration為作用期間、easing為時間曲線、complete為call back function，duration(預設值為400ms)、easing(預設值為swing)、complete這三者為選項可有可無。
+          n++;
+        }, 700);
+      }
+    </script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  </body>
+</html>
