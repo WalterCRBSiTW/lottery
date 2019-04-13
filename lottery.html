@@ -79,7 +79,7 @@
         </div>
       </div>
       <div class="col-12 text-center mb-5 text-white">
-        <h1 >中獎號碼</h1>
+        <span id="show">中獎號碼 : </span>
       </div>
       <div class="col-12 text-center">
         <button
@@ -110,9 +110,12 @@
     <script>
       var min;
       var max;
+      var num;
+      var allNum = "";
       var arr = [];
       var array = [];
       var x = 0;
+      var show = document.getElementById("show");
 
       document.getElementById("start").onclick = function() {
         min = parseFloat(document.getElementById("min").value);
@@ -122,40 +125,52 @@
           array[x] = i;
           x++;
         }
-        // console.warn(array);
-        //arr = [1, 2, 3, 4, 5];
+        //打亂陣列
         arr = array.sort(randomsort);
-        // console.log(arr);
-      };
-      document.getElementById("do").onclick = function() {
-        //獲取中獎號碼
-
-        roll();
-        var getNum = arr.shift();
-        arr = array.sort(randomsort);
-
-        console.log(getNum);
+        //留下10個數字
+        arr.length = 10;
         console.log(arr);
       };
-
+      document.getElementById("do").onclick = function() {
+        //開始抽獎
+        var runNum = roll();
+        if(arr.length > 0) {
+          getNum();
+        }
+        // console.log(getNum);
+       console.log(arr);
+      };
+      //獲取中獎號碼
+      function getNum() {
+        num = arr.shift();
+        console.log(num);      
+      }
       // 打亂陣列;
       function randomsort(a, b) {
         return Math.random() > 0.5 ? -1 : 1;
         //用Math.random()函式生成0~1之間的隨機數與0.5比較，返回-1或1 ?:如果 不是 則是
       }
-
-      //抽獎動畫
-      var n = 0;
-      function roll() {
-        setInterval(function() {
+      //抽獎動畫   
+      function roll() { 
+        var n = 0;
+        var set1 = setInterval(function() {
           $($(".boxNum")[n % 3]).text(arr[n]);
           //$($('.boxNum')[n % 3]).finish();
           $($(".boxNum")[n % 3]).css("left", "300px");
-
-          $($(".boxNum")[n % 3]).animate({ left: "-300px" }, 700, "linear");
+          $($(".boxNum")[n % 3]).animate({ left: "-300px" }, 400, "linear");
           //animate的基本用法為.animate( properties [, duration ] [, easing ] [, complete ] )
           //properties為目的效果、duration為作用期間、easing為時間曲線、complete為call back function，duration(預設值為400ms)、easing(預設值為swing)、complete這三者為選項可有可無。
           n++;
+
+          if (n == 10) {
+            $($(".boxNum")[n % 3]).text(num);
+            $($(".boxNum")[n % 3]).css("left", "300px");
+            $($(".boxNum")[n % 3]).animate({ left: "0px" }, 1500, "linear");
+            clearInterval(set1);
+            setTimeout(function(){$("#show")[0].innerHTML += " " + num;},2000);
+
+
+          }
         }, 700);
       }
     </script>
