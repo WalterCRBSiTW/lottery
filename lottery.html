@@ -28,7 +28,8 @@
         width: 300px;
         margin: 0 auto;
         position: relative;
-        background-color: rgb(255, 187, 0);
+        background-color: rgb(15, 15, 15);
+        overflow: hidden;
       }
       .boxNum {
         display: block;
@@ -72,14 +73,14 @@
             style="background-color: dimgray;"
           />
         </div>
-        <div id="box" class="mb-3">
+        <div id="box" class="mb-3 text-white">
           <h1 class="boxNum">123</h1>
-          <h1 class="boxNum"></h1>
+          <h1 id="winNum" class="boxNum"></h1>
           <h1 class="boxNum"></h1>
         </div>
       </div>
       <div class="col-12 text-center mb-5 text-white">
-        <span id="show">中獎號碼 : </span>
+        <span id="show" class="h1">中獎號碼 : </span>
       </div>
       <div class="col-12 text-center">
         <button
@@ -111,13 +112,18 @@
       var min;
       var max;
       var num;
-      var allNum = "";
       var arr = [];
       var array = [];
       var x = 0;
       var show = document.getElementById("show");
+      var box = document.getElementById("winNum");
 
-      document.getElementById("start").onclick = function() {
+      document.getElementById("start").onclick = startEvent;
+      document.getElementById("do").onclick = doEvent;
+      //取得抽獎範圍
+      function startEvent() {
+        //關閉方法，不重複
+        document.getElementById("start").onclick = function(){};
         min = parseFloat(document.getElementById("min").value);
         max = parseFloat(document.getElementById("max").value);
         //取得抽獎的範圍
@@ -125,33 +131,47 @@
           array[x] = i;
           x++;
         }
-        //打亂陣列
-        arr = array.sort(randomsort);
-        //留下10個數字
-        arr.length = 10;
-        console.log(arr);
+
+        if (array.length < 10) {
+          alert("抽獎範圍不得小於10");
+        } 
+        else {
+          //打亂陣列
+          arr = array.sort(randomsort);
+          console.log(arr);
+        } 
       };
-      document.getElementById("do").onclick = function() {
-        //開始抽獎
-        var runNum = roll();
-        if(arr.length > 0) {
-          getNum();
+      //開始抽獎
+      function doEvent() {
+        document.getElementById("do").onclick = function(){};
+        box.innerText = "";
+        document.getElementById("do").innerText = "Next Number";
+        
+        //如果中獎號碼未結束則繼續
+        if (arr.length > 0) {
+         roll();
+          console.log(arr);
         }
+        else if(arr.length == 0) {
+          alert("恭喜以上號碼中獎");
+          //開啟範圍選取按鈕
+          document.getElementById("start").onclick = startEvent;
+        }
+
         // console.log(getNum);
-       console.log(arr);
       };
       //獲取中獎號碼
       function getNum() {
         num = arr.shift();
-        console.log(num);      
+        console.log(num);
       }
       // 打亂陣列;
       function randomsort(a, b) {
         return Math.random() > 0.5 ? -1 : 1;
         //用Math.random()函式生成0~1之間的隨機數與0.5比較，返回-1或1 ?:如果 不是 則是
       }
-      //抽獎動畫   
-      function roll() { 
+      //抽獎動畫
+      function roll() {
         var n = 0;
         var set1 = setInterval(function() {
           $($(".boxNum")[n % 3]).text(arr[n]);
@@ -161,17 +181,20 @@
           //animate的基本用法為.animate( properties [, duration ] [, easing ] [, complete ] )
           //properties為目的效果、duration為作用期間、easing為時間曲線、complete為call back function，duration(預設值為400ms)、easing(預設值為swing)、complete這三者為選項可有可無。
           n++;
-
+          //第十個停止動畫(num是陣列最後一個值)
           if (n == 10) {
-            $($(".boxNum")[n % 3]).text(num);
+            $($(".boxNum")[n % 3]).text(arr[0]);
             $($(".boxNum")[n % 3]).css("left", "300px");
             $($(".boxNum")[n % 3]).animate({ left: "0px" }, 1500, "linear");
             clearInterval(set1);
-            setTimeout(function(){$("#show")[0].innerHTML += " " + num;},2000);
-
-
+            setTimeout(function() {
+              getNum();//取得中獎號碼
+              $("#show")[0].innerHTML += " " + num;
+              //將 do 按鈕恢復
+              document.getElementById("do").onclick = doEvent;
+            }, 2000);
           }
-        }, 700);
+        }, 400);
       }
     </script>
     <!-- Optional JavaScript -->
